@@ -16,7 +16,27 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from .views import UserViewSet, TeamViewSet, ActivityViewSet, LeaderboardViewSet, WorkoutViewSet, api_root
+
+from .views import UserViewSet, TeamViewSet, ActivityViewSet, LeaderboardViewSet, WorkoutViewSet
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import os
+
+CODESPACE_NAME = os.environ.get('CODESPACE_NAME')
+if CODESPACE_NAME:
+    BASE_URL = f'https://{CODESPACE_NAME}-8000.app.github.dev/api/'
+else:
+    BASE_URL = 'http://localhost:8000/api/'
+
+@api_view(['GET'])
+def api_root(request):
+    return Response({
+        'users': BASE_URL + 'users/',
+        'teams': BASE_URL + 'teams/',
+        'activities': BASE_URL + 'activities/',
+        'leaderboard': BASE_URL + 'leaderboard/',
+        'workouts': BASE_URL + 'workouts/',
+    })
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
